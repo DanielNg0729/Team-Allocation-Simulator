@@ -1,0 +1,79 @@
+Team Formation Algorithm - Pseudocode
+High-Level Overview
+PROGRAM TeamFormation:
+    1. Read student data from CSV file
+    2. Organize students by tutorial groups
+    3. For each tutorial group:
+        - Form balanced teams using greedy algorithm
+    4. Output teams to CSV file
+    5. Analyze and visualize diversity metrics
+END PROGRAM
+Detailed Pseudocode
+Main Process
+FUNCTION main():
+    data = READ_CSV("records.csv")
+    students_by_group = ORGANIZE_BY_GROUP(data)
+    
+    all_teams = []
+    FOR EACH group IN students_by_group:
+        teams = FORM_TEAMS(group, team_size)
+        ADD teams TO all_teams
+    
+    WRITE_TO_CSV(all_teams)
+    VISUALIZE_DIVERSITY(all_teams)
+END FUNCTION
+Team Formation (Greedy Algorithm)
+FUNCTION form_teams(students, team_size):
+    teams = []
+    available = students
+    
+    WHILE available has enough students:
+        current_team = []
+        
+        WHILE current_team.size < team_size:
+            best_student = NULL
+            best_score = -infinity
+            
+            FOR EACH student IN available:
+                test_team = current_team + student
+                score = CALCULATE_SCORE(test_team)
+                
+                IF score > best_score:
+                    best_score = score
+                    best_student = student
+            
+            ADD best_student TO current_team
+            REMOVE best_student FROM available
+        
+        ADD current_team TO teams
+    
+    DISTRIBUTE remaining students TO existing teams
+    
+    RETURN teams
+END FUNCTION
+Scoring System
+FUNCTION calculate_score(team):
+    school_score = SCORE_SCHOOL_DIVERSITY(team)
+    gender_score = SCORE_GENDER_DIVERSITY(team)
+    cgpa_score = SCORE_CGPA_BALANCE(team)
+    
+    total = school_score + gender_score + cgpa_score
+    RETURN total
+END FUNCTION
+
+RULES:
+- School Diversity: 
+    * All different = 100 points
+    * Max 2 from same school = 50 points
+    * Otherwise = 0 points
+
+- Gender Diversity:
+    * 2-3 of same gender = 100 points
+    * 1 or 4 of same gender = 50 points
+    * Otherwise = 0 points
+
+- CGPA Balance:
+    * Team average within 0.15 of class average = 100 points
+    * Within 0.30 = 50 points
+    * Within 0.50 = 20 points
+    * Otherwise = 0 points
